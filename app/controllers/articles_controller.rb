@@ -38,6 +38,13 @@ class ArticlesController < ApplicationController
     @article.destroy
   end
 
+  # GET /articles/include_all_data
+  def include_all_data
+    @articles = Article.all
+
+    render json: @articles.as_json(include:[:author, :comments, :tags])
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article
