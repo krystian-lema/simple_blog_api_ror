@@ -39,24 +39,12 @@ class AuthorsController < ApplicationController
   end
 
   def create_many
-    result_json = []
-    created_authors = []
-    errors = []
+    authors = []
     many_authors_params.each do |param|
-      author = param.permit(:firstname, :lastname, :bio)
-
-      author_instance = Author.new(author)
-
-      if author_instance.save
-        # render json: @author, status: :created, location: @author
-        created_authors << author_instance
-      else
-        # render json: @author.errors, status: :unprocessable_entity
-        errors << author_instance.errors
-      end
+      authors << Author.new(param.permit(:firstname, :lastname, :bio))
     end
-
-    result_json = { 'created_authors' => created_authors, 'errors' =>  errors }
+    results = Author.import(authors)
+    result_json = { 'created_authors_ids' => results.ids, 'failed_instances' =>  results.failed_instances }
     render json: result_json 
   end
 
